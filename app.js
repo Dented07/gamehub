@@ -1113,8 +1113,11 @@ const GameHubApp = () => {
   ]);
 };
 
-// Render the app
-ReactDOM.render(
-  React.createElement(GameHubApp),
-  document.getElementById('root')
-);
+// For compatibility with babel transpilation via script tag
+// (Render will happen after the whole script is parsed)
+setTimeout(() => {
+  ReactDOM.render(
+    React.createElement(GameHubApp),
+    document.getElementById('root')
+  );
+}, 0);
