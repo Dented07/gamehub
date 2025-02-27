@@ -4,7 +4,7 @@ const { useState, useEffect } = React;
 // API Service with real Steam integration
 const apiService = {
   // Replace with your actual Steam API key
-  steamApiKey: "D350C593F350495F5C23C31F7AE21599",
+  steamApiKey: "8C350896FE0C447A2AAD7EBCC3DBA165",
   
   // Authenticate with Steam
   authenticateSteam: async (steamId) => {
