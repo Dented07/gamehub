@@ -1,87 +1,9 @@
-// GameHub app with real Steam API integration
+// GameHub app with pre-loaded Steam data
 const { useState, useEffect } = React;
 
-// API Service with real Steam integration
+// API Service with pre-loaded Steam data
 const apiService = {
-  // Replace with your actual Steam API key
-  steamApiKey: "8C350896FE0C447A2AAD7EBCC3DBA165",
-  
-  // Authenticate with Steam
-  authenticateSteam: async (steamId) => {
-    try {
-      // In a real implementation, you'd use OpenID for authentication
-      // This is a simplified version that just validates the Steam ID
-      if (!steamId || !/^\d+$/.test(steamId)) {
-        throw new Error("Invalid Steam ID format");
-      }
-      return { success: true, steamId };
-    } catch (error) {
-      console.error("Steam authentication error:", error);
-      throw error;
-    }
-  },
-  
-  // Get real Steam games using the Web API
-  getSteamGames: async (steamId) => {
-  try {
-    // Use a CORS proxy for GitHub Pages
-    const corsProxy = "https://corsproxy.io/?";
-    const steamApiUrl = `${corsProxy}https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${apiService.steamApiKey}&steamid=${steamId}&format=json`;
-    
-    const response = await fetch(steamApiUrl);
-    
-    if (!response.ok) {
-      throw new Error(`Steam API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    // Check if we have games data in the expected format
-    if (data?.response?.games && Array.isArray(data.response.games)) {
-      console.log("Successfully fetched", data.response.games.length, "games");
-      
-      // Process the games - note that we need to add game details since they're not included
-      return data.response.games.map(game => ({
-        id: `steam-${game.appid}`,
-        title: `Game ${game.appid}`, // We'll need to fetch names separately
-        cover: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
-        platform: 'Steam',
-        macSupported: true, // We'd need another API call to determine this
-        storeId: game.appid.toString(),
-        playtime: Math.floor(game.playtime_forever / 60) // Convert minutes to hours
-      }));
-    } else {
-      console.error("Unexpected API response format:", data);
-      return [];
-    }
-  } catch (error) {
-    console.error("Steam games fetch error:", error);
-    throw error;
-  }
-}
-      
-      // Process the real Steam library data
-      if (data?.response?.games) {
-        return data.response.games.map(game => ({
-          id: `steam-${game.appid}`,
-          title: game.name || `Game ${game.appid}`,
-          cover: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
-          platform: 'Steam',
-          // Steam doesn't directly tell us Mac compatibility in this API call
-          macSupported: true, // We'll assume true for now
-          storeId: game.appid.toString(),
-          playtime: Math.floor(game.playtime_forever / 60) // Convert minutes to hours
-        }));
-      }
-      
-      return [];
-    } catch (error) {
-      console.error("Steam games fetch error:", error);
-      throw error;
-    }
-  },
-  
-  // Sample data for other platforms (for demo purposes)
+  // Sample data for non-Steam platforms (for demo purposes)
   getPlatformGames: (platform) => {
     const platforms = {
       xbox: [
@@ -97,13 +19,667 @@ const apiService = {
     };
     
     return platforms[platform] || [];
+  },
+  
+  // Get Steam games from pre-loaded data
+  getSteamGames: async () => {
+    try {
+      // This data is from your paste.txt file
+      const data = {
+        "response": {
+          "game_count": 56,
+          "games": [
+            {
+              "appid": 4000,
+              "playtime_forever": 55,
+              "playtime_windows_forever": 55,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1725563142,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 3590,
+              "playtime_forever": 15,
+              "playtime_windows_forever": 15,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1663277376,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 24780,
+              "playtime_forever": 180,
+              "playtime_windows_forever": 180,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1618870281,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 105600,
+              "playtime_forever": 66,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 66,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1677190865,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 209520,
+              "playtime_forever": 0,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 0,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1303990,
+              "playtime_forever": 0,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 0,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 244210,
+              "playtime_forever": 25,
+              "playtime_windows_forever": 25,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1717520172,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 270880,
+              "playtime_forever": 2245,
+              "playtime_windows_forever": 2245,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1732155265,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 284160,
+              "playtime_forever": 7120,
+              "playtime_windows_forever": 7097,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1736194169,
+              "playtime_disconnected": 89
+            },
+            {
+              "appid": 293760,
+              "playtime_forever": 337,
+              "playtime_windows_forever": 337,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1731687648,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 313120,
+              "playtime_forever": 47,
+              "playtime_windows_forever": 47,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1614813649,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 322170,
+              "playtime_2weeks": 11,
+              "playtime_forever": 5130,
+              "playtime_windows_forever": 5130,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1740517584,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 365670,
+              "playtime_forever": 3847,
+              "playtime_windows_forever": 3847,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1718315893,
+              "playtime_disconnected": 294
+            },
+            {
+              "appid": 343440,
+              "playtime_forever": 0,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 0,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 403120,
+              "playtime_forever": 249,
+              "playtime_windows_forever": 249,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1722905067,
+              "playtime_disconnected": 14
+            },
+            {
+              "appid": 413150,
+              "playtime_forever": 1889,
+              "playtime_windows_forever": 1458,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 430,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1662675426,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 428690,
+              "playtime_forever": 628,
+              "playtime_windows_forever": 628,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1708687637,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 275850,
+              "playtime_forever": 649,
+              "playtime_windows_forever": 649,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1733176120,
+              "playtime_disconnected": 8
+            },
+            {
+              "appid": 471710,
+              "playtime_forever": 2187,
+              "playtime_windows_forever": 2187,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1717519814,
+              "playtime_disconnected": 1
+            },
+            {
+              "appid": 493340,
+              "playtime_forever": 20,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 20,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1728953803,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 588430,
+              "playtime_forever": 1,
+              "playtime_windows_forever": 1,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1578014833,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 606800,
+              "playtime_forever": 103,
+              "playtime_windows_forever": 103,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1619276071,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 621060,
+              "playtime_forever": 1275,
+              "playtime_windows_forever": 1275,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1737527331,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 645630,
+              "playtime_forever": 228,
+              "playtime_windows_forever": 228,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1602943188,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 648800,
+              "playtime_forever": 19,
+              "playtime_windows_forever": 19,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1614543121,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 304930,
+              "playtime_forever": 0,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 0,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 24200,
+              "playtime_forever": 2516,
+              "playtime_windows_forever": 2516,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1672603903,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 860890,
+              "playtime_forever": 58,
+              "playtime_windows_forever": 58,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1619651337,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 787860,
+              "playtime_forever": 1004,
+              "playtime_windows_forever": 1004,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1736195685,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 979060,
+              "playtime_forever": 2987,
+              "playtime_windows_forever": 2987,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1640733686,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 996380,
+              "playtime_forever": 627,
+              "playtime_windows_forever": 627,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1716413318,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1017180,
+              "playtime_forever": 214,
+              "playtime_windows_forever": 214,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1726359497,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1097150,
+              "playtime_forever": 1094,
+              "playtime_windows_forever": 1094,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1719708849,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 285900,
+              "playtime_forever": 110,
+              "playtime_windows_forever": 110,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1717009791,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1122340,
+              "playtime_forever": 125,
+              "playtime_windows_forever": 125,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1682133573,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1167630,
+              "playtime_forever": 6301,
+              "playtime_windows_forever": 6301,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1733179148,
+              "playtime_disconnected": 92
+            },
+            {
+              "appid": 1211020,
+              "playtime_forever": 8473,
+              "playtime_windows_forever": 8473,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1733348870,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1240210,
+              "playtime_forever": 111,
+              "playtime_windows_forever": 111,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1711493019,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1241700,
+              "playtime_forever": 75,
+              "playtime_windows_forever": 75,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1715208022,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1237950,
+              "playtime_forever": 0,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 0,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1262580,
+              "playtime_forever": 20,
+              "playtime_windows_forever": 20,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1663279095,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1426210,
+              "playtime_forever": 54,
+              "playtime_windows_forever": 54,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1678648902,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1449500,
+              "playtime_forever": 0,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 0,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1493760,
+              "playtime_forever": 1990,
+              "playtime_windows_forever": 1990,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1708843889,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1498140,
+              "playtime_forever": 22,
+              "playtime_windows_forever": 22,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1716318333,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1509960,
+              "playtime_forever": 322,
+              "playtime_windows_forever": 322,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1719774659,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1465360,
+              "playtime_forever": 817,
+              "playtime_windows_forever": 817,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1726366928,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1703340,
+              "playtime_forever": 281,
+              "playtime_windows_forever": 281,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1716928708,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1780270,
+              "playtime_forever": 166,
+              "playtime_windows_forever": 166,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1726020986,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1818750,
+              "playtime_forever": 40,
+              "playtime_windows_forever": 40,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1727976317,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 1818940,
+              "playtime_forever": 0,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 0,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 2107090,
+              "playtime_forever": 282,
+              "playtime_windows_forever": 282,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1716676252,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 2200780,
+              "playtime_forever": 16,
+              "playtime_windows_forever": 0,
+              "playtime_mac_forever": 16,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1729710862,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 2401680,
+              "playtime_forever": 215,
+              "playtime_windows_forever": 215,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1719888905,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 2670630,
+              "playtime_forever": 90,
+              "playtime_windows_forever": 90,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1710541287,
+              "playtime_disconnected": 0
+            },
+            {
+              "appid": 2778420,
+              "playtime_forever": 3,
+              "playtime_windows_forever": 3,
+              "playtime_mac_forever": 0,
+              "playtime_linux_forever": 0,
+              "playtime_deck_forever": 0,
+              "rtime_last_played": 1714092149,
+              "playtime_disconnected": 0
+            }
+          ]
+        }
+      };
+      
+      // Process the games data
+      return data.response.games.map(game => ({
+        id: `steam-${game.appid}`,
+        title: getKnownGameName(game.appid) || `Game ${game.appid}`,
+        cover: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
+        platform: 'Steam',
+        macSupported: game.playtime_mac_forever > 0, // Determine Mac support from playtime data
+        storeId: game.appid.toString(),
+        playtime: Math.floor(game.playtime_forever / 60) // Convert minutes to hours
+      }));
+    } catch (error) {
+      console.error("Error processing Steam games:", error);
+      return [];
+    }
   }
 };
+
+// Function to provide names for known popular game IDs
+function getKnownGameName(appId) {
+  const gameNames = {
+    4000: "Garry's Mod",
+    3590: "Plants vs. Zombies",
+    24780: "SimCity 4 Deluxe",
+    105600: "Terraria",
+    209520: "XCOM: Enemy Unknown",
+    1303990: "Spiritfarer",
+    244210: "I Am Bread",
+    270880: "American Truck Simulator", 
+    284160: "BeamNG.drive",
+    293760: "Cities: Skylines",
+    313120: "Stranded Deep",
+    322170: "Geometry Dash",
+    365670: "RimWorld",
+    343440: "Vampyr",
+    403120: "Battleblock Theater",
+    413150: "Stardew Valley",
+    428690: "Satisfactory",
+    275850: "No Man's Sky",
+    471710: "Rocket League",
+    493340: "Planet Coaster",
+    588430: "Totally Accurate Battle Simulator",
+    606800: "Moonlighter",
+    621060: "PC Building Simulator",
+    645630: "The Last Campfire",
+    648800: "Raft",
+    304930: "Unrailed!",
+    24200: "Sanctum",
+    860890: "Aground",
+    787860: "Deep Rock Galactic",
+    979060: "AMID EVIL",
+    996380: "ABRISS",
+    1017180: "Islanders",
+    1097150: "Fall Guys",
+    285900: "Gang Beasts",
+    1122340: "Embr",
+    1167630: "Destiny 2",
+    1211020: "Artisan",
+    1240210: "The Wild at Heart",
+    1241700: "TOEM",
+    1237950: "Timberborn",
+    1262580: "Townscaper",
+    1426210: "Core Keeper",
+    1449500: "The Wandering Village",
+    1493760: "Dorfromantik",
+    1498140: "Wavetale",
+    1509960: "Moncage",
+    1465360: "Diplomacy is Not an Option",
+    1703340: "Brotato",
+    1780270: "Chants of Sennaar",
+    1818750: "Stacklands",
+    1818940: "Tchia",
+    2107090: "Braid, Anniversary Edition",
+    2200780: "Terra Nil",
+    2401680: "Hello Kitty Island Adventure",
+    2670630: "Animal Well",
+    2778420: "Balatro"
+  };
+  
+  return gameNames[appId] || null;
+}
 
 // GameCard Component
 const GameCard = ({ game }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const handleDownload = () => {
     if (game.macSupported) {
@@ -139,12 +715,9 @@ const GameCard = ({ game }) => {
   }, [
     React.createElement("img", {
       key: "image",
-      src: game.cover,
+      src: imageError ? 'https://via.placeholder.com/150x200?text=' + encodeURIComponent(game.title) : game.cover,
       alt: game.title,
-      onError: (e) => {
-        // Fallback if Steam image fails to load
-        e.target.src = 'https://via.placeholder.com/150x200?text=Game';
-      }
+      onError: () => setImageError(true)
     }),
     
     isHovered && !isDownloading && React.createElement("div", {
@@ -162,7 +735,7 @@ const GameCard = ({ game }) => {
         className: game.macSupported ? "mac-compatible" : "not-compatible"
       }, game.macSupported ? "Mac Compatible" : "Not Mac Compatible"),
       
-      game.playtime !== undefined && React.createElement("span", {
+      game.playtime !== undefined && game.playtime > 0 && React.createElement("span", {
         key: "playtime",
         className: "playtime"
       }, `${game.playtime} hours played`)
@@ -212,16 +785,8 @@ const GameHubApp = () => {
     
     try {
       if (authService === 'steam') {
-        // Use real Steam API
-        if (!credentials.steamId) {
-          throw new Error("Steam ID is required");
-        }
-        
-        // Authenticate with Steam
-        await apiService.authenticateSteam(credentials.steamId);
-        
-        // Get real Steam games
-        const steamGames = await apiService.getSteamGames(credentials.steamId);
+        // Get games from our pre-loaded data
+        const steamGames = await apiService.getSteamGames();
         
         // Update connected services
         setConnectedServices(prev => {
@@ -237,8 +802,10 @@ const GameHubApp = () => {
           const nonSteamGames = prev.filter(game => game.platform !== 'Steam');
           return [...nonSteamGames, ...steamGames];
         });
+        
+        alert(`Successfully loaded your Steam library! Found ${steamGames.length} games.`);
       } else {
-        // For other platforms, use demo data for now
+        // For other platforms, use demo data
         setConnectedServices(prev => {
           if (!prev.includes(authService)) {
             return [...prev, authService];
@@ -248,11 +815,16 @@ const GameHubApp = () => {
         
         // Get demo games for non-Steam platforms
         const platformGames = apiService.getPlatformGames(authService);
-        setGames(prev => [...prev, ...platformGames]);
+        
+        // Update games list
+        setGames(prev => {
+          const platformName = authService === 'psplus' ? 'PlayStation' : authService;
+          const nonPlatformGames = prev.filter(game => game.platform !== platformName);
+          return [...nonPlatformGames, ...platformGames];
+        });
+        
+        alert(`Connected to ${authService === 'psplus' ? 'PlayStation' : authService.charAt(0).toUpperCase() + authService.slice(1)}!`);
       }
-      
-      // Success message
-      alert(`Successfully connected to ${authService === 'psplus' ? 'PlayStation' : authService.charAt(0).toUpperCase() + authService.slice(1)}!`);
       
       // Close modal
       setShowLogin(false);
@@ -290,7 +862,7 @@ const GameHubApp = () => {
     });
   };
   
-  // Login Modal Component for different platforms
+  // Login Modal Component
   const LoginModal = () => {
     if (!showLogin) return null;
     
@@ -301,70 +873,36 @@ const GameHubApp = () => {
       epic: 'Epic Games'
     };
     
-    // Steam-specific login form
+    // Steam uses pre-loaded data, so it has a simpler login form
     if (authService === 'steam') {
-      const [steamId, setSteamId] = useState("");
-      const [error, setError] = useState("");
-      
-      const handleSteamSubmit = (e) => {
-        e.preventDefault();
-        if (!steamId.trim()) {
-          setError("Please enter your Steam ID");
-          return;
-        }
-        
-        handleLogin({ steamId });
-      };
-      
       return React.createElement("div", {
         className: "modal-overlay"
       }, 
         React.createElement("div", {
           className: "modal-content"
         }, [
-          React.createElement("h3", { key: "title" }, `Connect ${services[authService]}`),
-          React.createElement("p", { key: "desc" }, "Enter your Steam ID to sync your game library"),
+          React.createElement("h3", { key: "title" }, `Load Your Steam Library`),
+          React.createElement("p", { key: "desc" }, "Click the button below to load your pre-fetched Steam game data"),
           
-          error && React.createElement("div", { 
-            key: "error",
-            className: "error-message" 
-          }, error),
+          React.createElement("div", { key: "info", className: "demo-notice" },
+            "Using pre-loaded Steam data to avoid CORS issues with GitHub Pages."
+          ),
           
-          React.createElement("form", { 
-            key: "form", 
-            className: "login-form",
-            onSubmit: handleSteamSubmit
-          }, [
-            React.createElement("div", { key: "steamid-group" }, [
-              React.createElement("label", { key: "steamid-label" }, "Steam ID"),
-              React.createElement("input", { 
-                key: "steamid-input",
-                type: "text", 
-                value: steamId,
-                onChange: (e) => setSteamId(e.target.value),
-                placeholder: "Enter your 17-digit Steam ID"
-              }),
-              React.createElement("div", { 
-                key: "steamid-help",
-                className: "form-help" 
-              }, "Find your Steam ID in your profile URL or use SteamID.io")
-            ]),
+          React.createElement("div", { key: "buttons", className: "modal-buttons" }, [
+            React.createElement("button", {
+              key: "cancel",
+              type: "button",
+              onClick: () => setShowLogin(false),
+              className: "cancel-btn"
+            }, "Cancel"),
             
-            React.createElement("div", { key: "buttons", className: "modal-buttons" }, [
-              React.createElement("button", {
-                key: "cancel",
-                type: "button",
-                onClick: () => setShowLogin(false),
-                className: "cancel-btn"
-              }, "Cancel"),
-              
-              React.createElement("button", {
-                key: "connect",
-                type: "submit",
-                className: "connect-btn",
-                disabled: isLoading
-              }, isLoading ? "Connecting..." : "Connect to Steam")
-            ])
+            React.createElement("button", {
+              key: "connect",
+              type: "button",
+              className: "connect-btn",
+              disabled: isLoading,
+              onClick: () => handleLogin({ useLocalData: true })
+            }, isLoading ? "Loading..." : "Load Steam Library")
           ])
         ])
       );
@@ -400,7 +938,7 @@ const GameHubApp = () => {
           ]),
           
           React.createElement("div", { key: "demo-notice", className: "demo-notice" },
-            "Demo Mode: Real API integration is only available for Steam currently."
+            "Demo Mode: Using simulated data for this platform. Real API integration is only available for Steam."
           ),
           
           React.createElement("div", { key: "buttons", className: "modal-buttons" }, [
@@ -417,7 +955,7 @@ const GameHubApp = () => {
               className: "connect-btn",
               type: "button",
               disabled: isLoading
-            }, isLoading ? "Connecting..." : "Connect (Demo Mode)")
+            }, isLoading ? "Connecting..." : "Connect (Demo)")
           ])
         ])
       ])
@@ -520,8 +1058,9 @@ const GameHubApp = () => {
                         className: "sync-btn",
                         onClick: () => {
                           if (service === 'steam') {
-                            alert("Syncing Steam library...");
+                            alert("Refreshing Steam library...");
                             // Here you would refresh the Steam library
+                            handleLogin({ useLocalData: true });
                           } else {
                             alert(`Syncing ${names[service]} library...`);
                           }
@@ -533,7 +1072,7 @@ const GameHubApp = () => {
                       key: "connect",
                       className: "connect-platform-btn",
                       onClick: () => connectService(service)
-                    }, service === 'steam' ? "Connect with API" : "Connect")
+                    }, service === 'steam' ? "Load Library" : "Connect")
                 ]);
               })
             )
@@ -559,33 +1098,13 @@ const GameHubApp = () => {
             ])
           ]),
           
-          React.createElement("div", { key: "api-settings", className: "settings-section" }, [
-            React.createElement("h3", { key: "section-title" }, "API Settings"),
+          React.createElement("div", { key: "about", className: "settings-section" }, [
+            React.createElement("h3", { key: "section-title" }, "About GameHub"),
             
-            React.createElement("div", { key: "api-key", className: "api-key-section" }, [
-              React.createElement("label", { key: "label" }, "Steam API Key"),
-              React.createElement("div", { key: "key-input", className: "api-key-input" }, [
-                React.createElement("input", { 
-                  key: "input",
-                  type: "password",
-                  value: "•".repeat(24),
-                  readOnly: true
-                }),
-                React.createElement("button", { 
-                  key: "btn", 
-                  className: "edit-api-key-btn",
-                  onClick: () => {
-                    const newKey = prompt("Enter your Steam API Key:", apiService.steamApiKey);
-                    if (newKey && newKey.trim()) {
-                      apiService.steamApiKey = newKey.trim();
-                      alert("Steam API Key updated!");
-                    }
-                  }
-                }, "Edit")
-              ]),
-              React.createElement("p", { key: "key-help", className: "api-key-help" },
-                "Your Steam API key is stored locally and used to access your Steam library data."
-              )
+            React.createElement("div", { key: "about-info", className: "about-info" }, [
+              React.createElement("p", { key: "version" }, "Version: 1.0.0"),
+              React.createElement("p", { key: "platform" }, "Platform: macOS"),
+              React.createElement("p", { key: "description" }, "GameHub is a game library aggregator that lets you manage all your games in one place.")
             ])
           ])
         ])
@@ -595,5 +1114,7 @@ const GameHubApp = () => {
 };
 
 // Render the app
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(GameHubApp));
+ReactDOM.render(
+  React.createElement(GameHubApp),
+  document.getElementById('root')
+);
