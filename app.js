@@ -23,16 +23,42 @@ const apiService = {
   
   // Get real Steam games using the Web API
   getSteamGames: async (steamId) => {
-    try {
-      // Real Steam API endpoint
-      const corsProxy = "https://corsproxy.io/?";
-      const steamApiUrl = `https://cors-anywhere.herokuapp.com/https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${apiService.steamApiKey}&steamid=${steamId}&include_appinfo=true&include_played_free_games=true&format=json`;
-      const response = await fetch(steamApiUrl);
-      if (!response.ok) {
-        throw new Error(`Steam API error: ${response.status}`);
-      }
+  try {
+    // Use a CORS proxy for GitHub Pages
+    const corsProxy = "https://corsproxy.io/?";
+    const steamApiUrl = `${corsProxy}https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${apiService.steamApiKey}&steamid=${steamId}&format=json`;
+    
+    const response = await fetch(steamApiUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Steam API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Check if we have games data in the expected format
+    if (data?.response?.games && Array.isArray(data.response.games)) {
+      console.log("Successfully fetched", data.response.games.length, "games");
       
-      const data = await response.json();
+      // Process the games - note that we need to add game details since they're not included
+      return data.response.games.map(game => ({
+        id: `steam-${game.appid}`,
+        title: `Game ${game.appid}`, // We'll need to fetch names separately
+        cover: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
+        platform: 'Steam',
+        macSupported: true, // We'd need another API call to determine this
+        storeId: game.appid.toString(),
+        playtime: Math.floor(game.playtime_forever / 60) // Convert minutes to hours
+      }));
+    } else {
+      console.error("Unexpected API response format:", data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Steam games fetch error:", error);
+    throw error;
+  }
+}
       
       // Process the real Steam library data
       if (data?.response?.games) {
