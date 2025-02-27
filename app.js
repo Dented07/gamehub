@@ -25,6 +25,7 @@ const apiService = {
   getSteamGames: async (steamId) => {
     try {
       // Real Steam API endpoint
+      const corsProxy = "https://corsproxy.io/?";
       const steamApiUrl = `https://cors-anywhere.herokuapp.com/https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${apiService.steamApiKey}&steamid=${steamId}&include_appinfo=true&include_played_free_games=true&format=json`;
       const response = await fetch(steamApiUrl);
       if (!response.ok) {
